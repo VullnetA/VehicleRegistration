@@ -1,0 +1,17 @@
+INSURANCE REPOSITORY
+
+@Query(
+            value = "SELECT COUNT(*) " +
+                    "FROM insurance i ",
+            nativeQuery = true)
+    long countInsurance();
+
+
+
+    @Query(
+            value = "SELECT * " +
+                    "FROM vehicle v, insurance i " +
+                    "WHERE v.vehicleid = i.vehicle_id " +
+                    "AND i.expirationdate < CURRENT_DATE",
+            nativeQuery = true)
+    List<Vehicle> findExpiredInsurance();
