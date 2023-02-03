@@ -1,5 +1,7 @@
-# **VehicleRegistrationSystem**![spring-boot-logo](https://user-images.githubusercontent.com/74537719/216708480-fab38cf2-a0e4-462f-b7b5-0005c2caa2c0.png)
+# **VehicleRegistrationSystem**
 
+
+![spring-boot-logo (1)](https://user-images.githubusercontent.com/74537719/216723070-8fe527ac-8c64-4ef9-a4b0-f534b7ed5c3f.jpg)
 ## Spring Boot Project
 This Spring Boot project will represent the BackEnd of a Vehicle Registration System, where the users of the application will have options to register different vehicles corresponding to different owners and will be able to manipulate the data in order to retrieve information based on different requests. Each vehicle that will be registered will be automatically given a registration date and an expiration date on its registration.
 In the same way Insurances can be registered to different vehicles, and the payment for each insurance will depend on the vehicle type and horsepower.
@@ -94,4 +96,4 @@ By using **POSTMAN** or **INSOMNIA** you can now test all the various endpoints 
 
 
 
-[CLICK HERE TO VIEW THE DDL SCRIPTS](targetURL "DDL SCRIPTS")
+[CLICK HERE TO VIEW THE DDL SCRIPTS](https://github.com/VullnetA/VehicleRegistration/tree/master/documentation "DDL SCRIPTS")
