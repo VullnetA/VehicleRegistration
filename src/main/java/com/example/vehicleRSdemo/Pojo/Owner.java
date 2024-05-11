@@ -1,8 +1,13 @@
 package com.example.vehicleRSdemo.Pojo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "owner")
 public class Owner {
@@ -35,74 +40,5 @@ public class Owner {
         this.placeOfBirth = placeOfBirth;
         this.gender = gender;
         this.licenseIssueDate = licenseIssueDate;
-    }
-
-    public Integer getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(Integer ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getPlaceOfBirth() {
-        return placeOfBirth;
-    }
-
-    public void setPlaceOfBirth(String placeOfBirth) {
-        this.placeOfBirth = placeOfBirth;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public LocalDate getLicenseIssueDate() {
-        return licenseIssueDate;
-    }
-
-    public void setLicenseIssueDate(LocalDate licenseIssueDate) {
-        this.licenseIssueDate = licenseIssueDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Owner{" +
-                "SSN=" + ownerId +
-                ", First Name='" + firstName + '\'' +
-                ", Last Name='" + lastName + '\'' +
-                ", Date Of Birth=" + dateOfBirth +
-                ", Place Of Birth='" + placeOfBirth + '\'' +
-                ", Gender='" + gender + '\'' +
-                ", License Issue Date=" + licenseIssueDate +
-                '}';
     }
 }

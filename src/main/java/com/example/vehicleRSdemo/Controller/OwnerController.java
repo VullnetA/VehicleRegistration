@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 public class OwnerController {
-    @Autowired
+
     OwnerService ownerService;
 
     @Autowired
@@ -18,20 +18,22 @@ public class OwnerController {
         this.ownerService = ownerService;
     }
 
-    @GetMapping("/owners")
-    public List<Owner> getAll() { return ownerService.findAll(); }
-
-    @GetMapping("/owners/{id}")
-    public Owner getOneById(@PathVariable Integer id) { return ownerService.findOneById(id); }
-
-    @GetMapping("/findbycar")
-    public List<Owner> findOwnerByVehicle(@RequestBody FindOwnerByCar car) {
-        String manufacturer = car.getManufacturer();
-        String model = car.getModel();
-        return ownerService.findOwnerByVehicle(manufacturer, model);
+    @GetMapping("/AllOwners")
+    public List<Owner> getAll() {
+        return ownerService.findAll();
     }
 
-    @PostMapping("/input")
+    @GetMapping("/OwnerById/{id}")
+    public Owner getOneById(@PathVariable Integer id) {
+        return ownerService.findById(id);
+    }
+
+    @DeleteMapping("/RemoveOwner/{id}")
+    public void delete(@PathVariable Integer id) {
+        ownerService.delete(id);
+    }
+
+    @PostMapping("/InputOwner")
     public Owner createOwner(@RequestBody InputOwner input) {
         String firstName = input.getFirstName();
         String lastName = input.getLastName();
@@ -43,10 +45,20 @@ public class OwnerController {
         return ownerService.createOwner(firstName,lastName,dateOfBirth,placeOfBirth,gender,licenseIssueDate);
     }
 
-    @DeleteMapping("/remove/{id}")
-    public void delete(@PathVariable Integer id) {ownerService.delete(id);}
+    @GetMapping("/OwnersByCar")
+    public List<Owner> findOwnerByVehicle(@RequestBody RequestVehicle vehicle) {
+        String manufacturer = vehicle.getManufacturer();
+        String model = vehicle.getModel();
+        return ownerService.findOwnerByVehicle(manufacturer, model);
+    }
 
-    @GetMapping("/owners/{city}")
-    public List<Owner> findByCity(@PathVariable String placeofbirth) { return ownerService.findByCity(placeofbirth); }
+    @GetMapping("/LicensesByCity/{placeOfBirth}")
+    public long licensesByCity(@PathVariable String placeOfBirth) {
+        return ownerService.licensesByCity(placeOfBirth);
+    }
 
+    @GetMapping("/OwnersByCity/{placeOfBirth}")
+    public List<Owner> findByCity(@PathVariable String placeOfBirth) {
+        return ownerService.findByCity(placeOfBirth);
+    }
 }

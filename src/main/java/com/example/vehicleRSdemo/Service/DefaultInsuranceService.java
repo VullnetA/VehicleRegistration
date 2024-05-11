@@ -2,94 +2,68 @@ package com.example.vehicleRSdemo.Service;
 
 import com.example.vehicleRSdemo.Pojo.*;
 import com.example.vehicleRSdemo.Repository.InsuranceRepository;
-import com.example.vehicleRSdemo.Repository.OwnerRepository;
 import com.example.vehicleRSdemo.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class DefaultInsuranceService implements InsuranceService{
+public class DefaultInsuranceService implements InsuranceService {
+    private final VehicleRepository vehicleRepository;
+    private final InsuranceRepository insuranceRepository;
+
+    private static final Map<Category, Float> CATEGORY_FEES = Map.of(
+            Category.Motorcycle, 1000f,
+            Category.Hatchback, 2000f,
+            Category.Coupe, 2500f,
+            Category.Sedan, 3000f,
+            Category.Van, 4000f,
+            Category.SUV, 4500f,
+            Category.Truck, 6000f,
+            Category.Bus, 6500f
+    );
+
+    private static final Map<Integer, Float> HORSEPOWER_FEES = Map.of(
+            100, 500f,
+            200, 700f,
+            300, 800f,
+            400, 900f,
+            500, 1000f
+    );
+
     @Autowired
-    private VehicleRepository vehicleRepository;
-    @Autowired
-    private OwnerRepository ownerRepository;
-    @Autowired
-    private InsuranceRepository insuranceRepository;
+    public DefaultInsuranceService(VehicleRepository vehicleRepository, InsuranceRepository insuranceRepository) {
+        this.vehicleRepository = vehicleRepository;
+        this.insuranceRepository = insuranceRepository;
+    }
 
     @Override
     public List<Insurance> findAll() {
-        List<Insurance> allInsurances = new ArrayList<>();
-        Iterable<Insurance> insurances = insuranceRepository.findAll();
-        for (Insurance insurance: insurances){
-            allInsurances.add(insurance);
-        }
-        return allInsurances;
+        return insuranceRepository.findAll();
     }
 
     @Override
     public Insurance findOneById(Integer id) {
-        return insuranceRepository.findInsuranceById(id);
+        return insuranceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Insurance with ID " + id + " not found"));
     }
 
     @Override
-    public Insurance create(InsuranceCompany insuranceCompany, Integer vehicleId,
-                            LocalDate dateRegistered, LocalDate expirationDate) {
-        Vehicle vehicle = vehicleRepository.findVehicleById(vehicleId);
+    public Insurance create(InsuranceCompany insuranceCompany, Integer vehicleId) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle with ID " + vehicleId + " not found"));
         Insurance insurance = new Insurance();
         insurance.setInsuranceCompany(insuranceCompany);
-
-        float fee = 0;
-
-        Category category = vehicle.getCategory();
-
-        switch(category) {
-            case Motorcycle:
-                fee = fee + 1000;
-                break;
-            case Hatchback:
-                fee = fee + 2000;
-                break;
-            case Coupe:
-                fee = fee + 2500;
-                break;
-            case Sedan:
-                fee = fee + 3000;
-                break;
-            case Van:
-                fee = fee + 4000;
-                break;
-            case SUV:
-                fee = fee + 4500;
-                break;
-            case Truck:
-                fee = fee + 6000;
-                break;
-            case Bus:
-                fee = fee + 6500;
-        }
-
-        Integer horsepower = vehicle.getPower();
-
-        if(horsepower<100){
-            fee = fee + 500;
-        } else if (horsepower<200 && horsepower>100) {
-            fee = fee + 700;
-        } else if (horsepower<300 && horsepower>200) {
-            fee = fee + 800;
-        } else if (horsepower<400 && horsepower>300) {
-            fee = fee + 900;
-        } else if (horsepower>400) {
-            fee = fee + 1000;
-        }
-
-        insurance.setInsuranceFee(fee);
+        insurance.setInsuranceFee(calculateFee(vehicle));
         insurance.setVehicle(vehicle);
-        insurance.setDateRegistered(dateRegistered);
-        insurance.setExpirationDate(expirationDate);
+        insurance.setDateRegistered(LocalDate.now());
+        insurance.setExpirationDate(LocalDate.now().plusYears(1));
+
         return insuranceRepository.save(insurance);
     }
 
@@ -99,13 +73,21 @@ public class DefaultInsuranceService implements InsuranceService{
     }
 
     @Override
-    public List<Owner> findInsuranceByVehicle() {
-        return null;
-    }
-
-    @Override
     public long countInsurance() {
         return insuranceRepository.countInsurance();
     }
 
+    private float calculateFee(Vehicle vehicle) {
+        float baseFee = Optional.ofNullable(CATEGORY_FEES.get(vehicle.getCategory())).orElse(0f);
+        float horsepowerFee = calculateHorsepowerFee(vehicle.getPower());
+        return baseFee + horsepowerFee;
+    }
+
+    private float calculateHorsepowerFee(int horsepower) {
+        return HORSEPOWER_FEES.entrySet().stream()
+                .filter(entry -> horsepower >= entry.getKey())
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(0f);
+    }
 }
