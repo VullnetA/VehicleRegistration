@@ -38,6 +38,9 @@ public class DefaultVehicleService implements VehicleService{
 
     @Override
     public List<Vehicle> findAllByOwner(Integer ownerId) {
+        if (ownerId == null) {
+            throw new IllegalArgumentException("Owner ID cannot be null");
+        }
         return vehicleRepository.findAllByOwner(ownerId);
     }
 
