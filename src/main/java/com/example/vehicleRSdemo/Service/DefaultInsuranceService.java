@@ -77,17 +77,17 @@ public class DefaultInsuranceService implements InsuranceService {
         return insuranceRepository.countInsurance();
     }
 
-    private float calculateFee(Vehicle vehicle) {
+    public float calculateFee(Vehicle vehicle) {
         float baseFee = Optional.ofNullable(CATEGORY_FEES.get(vehicle.getCategory())).orElse(0f);
         float horsepowerFee = calculateHorsepowerFee(vehicle.getPower());
         return baseFee + horsepowerFee;
     }
 
-    private float calculateHorsepowerFee(int horsepower) {
+    public float calculateHorsepowerFee(int horsepower) {
         return HORSEPOWER_FEES.entrySet().stream()
                 .filter(entry -> horsepower >= entry.getKey())
+                .max(Map.Entry.comparingByKey())
                 .map(Map.Entry::getValue)
-                .findFirst()
                 .orElse(0f);
     }
 }
