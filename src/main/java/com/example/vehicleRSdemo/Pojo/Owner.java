@@ -28,17 +28,7 @@ public class Owner {
     @Column(name = "licensedate")
     private LocalDate licenseIssueDate;
 
-    public Owner() {
-    }
+    public Owner () {
 
-    public Owner(Integer ownerId, String firstName, String lastName,
-                 LocalDate dateOfBirth, String placeOfBirth, Gender gender, LocalDate licenseIssueDate) {
-        this.ownerId = ownerId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
-        this.placeOfBirth = placeOfBirth;
-        this.gender = gender;
-        this.licenseIssueDate = licenseIssueDate;
     }
 }
