@@ -168,7 +168,6 @@ class DefaultInsuranceServiceTest {
         assertEquals(LocalDate.now().plusYears(1), createdInsurance.getExpirationDate());
         assertEquals(InsuranceCompany.AKTIVA, createdInsurance.getInsuranceCompany());
         assertEquals(vehicle, createdInsurance.getVehicle());
-        // Check for correct fee calculation based on provided vehicle details
         assertEquals(3800f, createdInsurance.getInsuranceFee());
     }
 
@@ -197,8 +196,6 @@ class DefaultInsuranceServiceTest {
         // Assert
         assertEquals(5200f, fee);
     }
-
-
 
     @Test
     public void testCalculateHorsepowerFee() {
