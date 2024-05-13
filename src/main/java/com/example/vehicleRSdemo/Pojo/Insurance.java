@@ -1,8 +1,13 @@
 package com.example.vehicleRSdemo.Pojo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "insurance")
 public class Insurance {
@@ -22,77 +27,6 @@ public class Insurance {
     @Column(name = "expirationdate")
     private LocalDate expirationDate;
 
-
     public Insurance() {
-    }
-
-    public Insurance(Integer id, InsuranceCompany insuranceCompany, float insuranceFee,
-                     Vehicle vehicle, LocalDate dateRegistered, LocalDate expirationDate) {
-        this.id = id;
-        this.insuranceCompany = insuranceCompany;
-        this.insuranceFee = insuranceFee;
-        this.vehicle = vehicle;
-        this.dateRegistered = dateRegistered;
-        this.expirationDate = expirationDate;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public InsuranceCompany getInsuranceCompany() {
-        return insuranceCompany;
-    }
-
-    public void setInsuranceCompany(InsuranceCompany insuranceCompany) {
-        this.insuranceCompany = insuranceCompany;
-    }
-
-    public float getInsuranceFee() {
-        return insuranceFee;
-    }
-
-    public void setInsuranceFee(float insuranceFee) {
-        this.insuranceFee = insuranceFee;
-    }
-
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public LocalDate getDateRegistered() {
-        return dateRegistered;
-    }
-
-    public void setDateRegistered(LocalDate dateRegistered) {
-        this.dateRegistered = dateRegistered;
-    }
-
-    public LocalDate getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(LocalDate expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Insurance{" +
-                "id=" + id +
-                ", insuranceCompany=" + insuranceCompany +
-                ", insuranceFee=" + insuranceFee +
-                ", vehicle=" + vehicle +
-                ", dateRegistered=" + dateRegistered +
-                ", expirationDate=" + expirationDate +
-                '}';
     }
 }

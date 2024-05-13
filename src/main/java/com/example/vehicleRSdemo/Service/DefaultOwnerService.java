@@ -3,9 +3,9 @@ package com.example.vehicleRSdemo.Service;
 import com.example.vehicleRSdemo.Pojo.Gender;
 import com.example.vehicleRSdemo.Pojo.Owner;
 import com.example.vehicleRSdemo.Repository.OwnerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.List;
 
 @Service
 public class DefaultOwnerService implements OwnerService{
-    @Autowired
-    private OwnerRepository ownerRepository;
+
+    private final OwnerRepository ownerRepository;
 
     public DefaultOwnerService(OwnerRepository ownerRepository) {
         this.ownerRepository = ownerRepository;
@@ -31,8 +31,8 @@ public class DefaultOwnerService implements OwnerService{
     }
 
     @Override
-    public Owner findOneById(Integer id) {
-        return ownerRepository.findById(id).get();
+    public Owner findById(Integer id) {
+        return ownerRepository.findById(id).orElseThrow((() -> new EntityNotFoundException("Owner with ID " + id + " not found")));
     }
 
     @Override
@@ -66,12 +66,12 @@ public class DefaultOwnerService implements OwnerService{
     }
 
     @Override
-    public long licensesByCity(String placeofbirth){
-        return ownerRepository.licensesByCity(placeofbirth);
+    public long licensesByCity(String placeOfBirth){
+        return ownerRepository.licensesByCity(placeOfBirth);
     }
 
     @Override
-    public List<Owner> findByCity(String placeofbirth) {
-        return ownerRepository.findByCity(placeofbirth);
+    public List<Owner> findByCity(String placeOfBirth) {
+        return ownerRepository.findByCity(placeOfBirth);
     }
 }

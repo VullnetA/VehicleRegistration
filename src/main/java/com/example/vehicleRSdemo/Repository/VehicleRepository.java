@@ -7,20 +7,25 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VehicleRepository extends CrudRepository<Vehicle, Integer> {
-    Vehicle findVehicleById(Integer id);
 
     List<Vehicle> findAll();
+
+    Optional<Vehicle> findById(Integer id);
+
+    void deleteById(Integer id);
+
     @Query(
             value = "SELECT * " +
                     "FROM vehicle v, owner o " +
                     "WHERE v.user_id = o.ownerid " +
-                    "AND v.user_id = :ownerId " +
-                    "AND o.ownerid = :ownerId",
+                    "AND v.user_id = :ownerId",
             nativeQuery = true)
-    List<Vehicle> findAllByOwner(Integer ownerId);
+    List<Vehicle> findAllByOwner(@Param("ownerId") Integer ownerId);
+
 
     @Query(
             value = "SELECT * " +
@@ -32,7 +37,7 @@ public interface VehicleRepository extends CrudRepository<Vehicle, Integer> {
     @Query(
             value = "SELECT * " +
                     "FROM vehicle v " +
-                    "WHERE v.power > :power ",
+                    "WHERE v.power > :power AND :power >= 0 ",
             nativeQuery = true)
     List<Vehicle> findByHorsepower(Integer power);
 
@@ -71,13 +76,11 @@ public interface VehicleRepository extends CrudRepository<Vehicle, Integer> {
             nativeQuery = true)
     long countRegistered ();
 
-    @Query(
-            value = "SELECT * " +
-                    "FROM vehicle v " +
-                    "WHERE v.expirationdate > CURRENT_DATE " +
-                    "AND v.vehicleid = :id",
-            nativeQuery = true)
-    Vehicle checkRegistration(Integer id);
+    @Query(value = "SELECT CASE WHEN COUNT(v) > 0 THEN 1 ELSE 0 END " +
+            "FROM vehicle v " +
+            "WHERE v.expirationdate > CURRENT_DATE " +
+            "AND v.vehicleid = :id", nativeQuery = true)
+    boolean checkRegistration(@Param("id") Integer id);
 
     @Query(
             value = "SELECT COUNT(*) " +
@@ -92,8 +95,4 @@ public interface VehicleRepository extends CrudRepository<Vehicle, Integer> {
                     "WHERE v.licenseplate = :licenseplate ",
             nativeQuery = true)
     Vehicle findByLicensePlate(@Param("licenseplate")String licenseplate);
-
-
-    void deleteById(Integer id);
-
 }

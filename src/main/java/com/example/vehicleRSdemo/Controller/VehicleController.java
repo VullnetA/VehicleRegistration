@@ -2,73 +2,143 @@ package com.example.vehicleRSdemo.Controller;
 
 import com.example.vehicleRSdemo.Pojo.*;
 import com.example.vehicleRSdemo.Service.VehicleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import javax.persistence.EntityNotFoundException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class VehicleController {
-    @Autowired
+    final
     VehicleService vehicleService;
 
-    @GetMapping("/vehicles")
-    public List<Vehicle> getAll() { return vehicleService.findAll(); }
-
-    @GetMapping("/vehicles/{id}")
-    public Vehicle getOneById(@PathVariable Integer id) { return vehicleService.findOneById(id); }
-
-    @PostMapping("/register")
-    public Vehicle create(@RequestBody RegisterVehicle register) {
-
-        String newManufacturer = register.getManufacturer();
-        String newModel = register.getModel();
-        Integer newYear = register.getYear();
-        Category newCategory = register.getCategory();
-        Transmission newTransmission = register.getTransmission();
-        Integer newPower = register.getPower();
-        Fuel newFuel = register.getFuel();
-        String newLicensePlate = register.getLicensePlate();
-        Integer newOwnerId = register.getOwnerId();
-        LocalDate newDateRegistered = LocalDate.now();
-        LocalDate newExpirationDate = newDateRegistered.plusYears( 1 );
-
-        return vehicleService.create(newManufacturer, newModel,
-                newYear, newCategory, newTransmission, newPower,
-                newFuel, newLicensePlate, newOwnerId, newDateRegistered, newExpirationDate);
+    public VehicleController(VehicleService vehicleService) {
+        this.vehicleService = vehicleService;
     }
 
-    @PutMapping("/vehicles/{id}")
+    @GetMapping("/AllVehicles")
+    public List<Vehicle> getAll() {
+        return vehicleService.findAll();
+    }
+
+    @GetMapping("/VehicleById/{id}")
+    public Vehicle getOneById(@PathVariable Integer id) {
+        return vehicleService.findById(id);
+    }
+
+    @DeleteMapping("/DeleteVehicle/{id}")
+    public void delete(@PathVariable Integer id) {
+        vehicleService.delete(id);
+    }
+
+    @PostMapping("/RegisterVehicle")
+    public Vehicle create(@RequestBody RequestVehicle register) {
+
+        String Manufacturer = register.getManufacturer();
+        String Model = register.getModel();
+        Integer Year = register.getYear();
+        Category Category = register.getCategory();
+        Transmission Transmission = register.getTransmission();
+        Integer Power = register.getPower();
+        Fuel Fuel = register.getFuel();
+        String LicensePlate = register.getLicensePlate();
+        Integer OwnerId = register.getOwnerId();
+
+        return vehicleService.create(Manufacturer, Model,
+                Year, Category, Transmission, Power,
+                Fuel, LicensePlate, OwnerId);
+    }
+
+    @PutMapping("/EditVehicle/{id}")
     public Vehicle edit(@PathVariable Integer id,
-                                @RequestBody EditVehicle input) {
-        String newLicensePlate = input.getLicensePlate();
-        Integer newOwnerId = input.getOwnerId();
-        LocalDate newDateRegistered = LocalDate.now();
-        LocalDate newExpirationDate = newDateRegistered.plusYears( 1 );
+                                @RequestBody RequestVehicle input) {
+        String licensePlate = input.getLicensePlate();
+        Integer ownerId = input.getOwnerId();
 
-    return vehicleService.edit(id, newLicensePlate, newOwnerId, newDateRegistered, newExpirationDate);
+    return vehicleService.edit(id, licensePlate, ownerId);
     }
 
-    @GetMapping("/ownervehicles/{id}")
-    public List<Vehicle> findAllByOwner(@PathVariable Integer id) { return vehicleService.findAllByOwner(id); }
+    @GetMapping("/VehiclesForOwner/{id}")
+    public List<Vehicle> findAllByOwner(@PathVariable Integer id) {
+        return vehicleService.findAllByOwner(id);
+    }
 
-    @GetMapping("/vehicleyear/{year}")
-    public List<Vehicle> findVehicleByYear(@PathVariable Integer year) { return vehicleService.findByYear(year); }
+    @GetMapping("/VehiclesByYear/{year}")
+    public List<Vehicle> findVehicleByYear(@PathVariable Integer year) {
+        return vehicleService.findByYear(year);
+    }
 
-    @GetMapping("/vehiclepower/{power}")
-    public List<Vehicle> findVehicleWithMorePower(@PathVariable Integer power) { return vehicleService.findByHorsepower(power); }
+    @GetMapping("/VehiclesByPower/{power}")
+    public List<Vehicle> findVehicleWithMorePower(@PathVariable Integer power) {
+        return vehicleService.findByHorsepower(power);
+    }
 
-    @GetMapping("/fuel/{fuel}")
+    @GetMapping("/VehiclesByFuel/{fuel}")
     public List<Vehicle> findVehicleByFuel(@PathVariable String fuel) {
         return vehicleService.findByFuelType(fuel);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Integer id) {vehicleService.delete(id);}
-
-    @GetMapping("/brand/{manufacturer}")
+    @GetMapping("/VehiclesByBrand/{manufacturer}")
     public List<Vehicle> findVehicleByBrand(@PathVariable String manufacturer) {
-        return vehicleService.findVehicleByBrand(manufacturer); }
+        return vehicleService.findVehicleByBrand(manufacturer);
+    }
 
+    @GetMapping("/CheckRegistration/{id}")
+    public ResponseEntity<String> checkRegistration(@PathVariable Integer id) {
+        boolean isRegistered = vehicleService.checkRegistration(id);
+        return ResponseEntity.ok(isRegistered ? "Registered" : "Not Registered");
+    }
+
+    @GetMapping("/FindByLicensePlate/{licenseplate}")
+    Vehicle findByLicensePlate(@PathVariable String licenseplate) {
+        return vehicleService.findByLicensePlate(licenseplate);
+    }
+
+    @GetMapping("/CountByBrand/{manufacturer}")
+    public long countByBrand(@PathVariable String manufacturer) {
+        return vehicleService.countByBrand(manufacturer);
+    }
+
+    @GetMapping("/CountByTransmission/{transmission}")
+    public long countTransmission(@PathVariable String transmission) {
+        return vehicleService.countTransmission(transmission);
+    }
+
+    @GetMapping("/CountRegistered")
+    public long countRegistered() {
+        return vehicleService.countRegistered();
+    }
+
+    @GetMapping("/CountUnregistered")
+    public long countUnregistered() {
+        return vehicleService.countUnregistered();
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleIllegalStateException(IllegalStateException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
+    }
 }

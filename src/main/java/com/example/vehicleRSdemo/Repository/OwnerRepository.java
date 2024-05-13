@@ -7,17 +7,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 
-    @Query(
-            value = "SELECT * " +
-                    "FROM owner o",
-            nativeQuery = true)
+
     List<Owner> findAll();
 
-    Owner findOwnerByOwnerId(Integer ownerId);
+    Optional<Owner> findById(Integer ownerId);
+
+    void deleteById(Integer id);
 
     @Query(
             value = "SELECT * " +
@@ -27,8 +27,6 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
                     "AND v.model = :model ",
             nativeQuery = true)
     List<Owner> findOwnerByVehicle(String manufacturer, String model);
-
-    void deleteById(Integer id);
 
     @Query(
             value = "SELECT COUNT(*) " +
