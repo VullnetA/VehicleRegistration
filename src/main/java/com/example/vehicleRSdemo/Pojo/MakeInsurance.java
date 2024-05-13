@@ -14,14 +14,4 @@ public class MakeInsurance {
     private Integer vehicleId;
     private LocalDate dateRegistered;
     private LocalDate expirationDate;
-
-    public MakeInsurance(Integer id, InsuranceCompany insuranceCompany, float insuranceFee,
-                         Integer vehicleId, LocalDate dateRegistered, LocalDate expirationDate) {
-        this.id = id;
-        this.insuranceCompany = insuranceCompany;
-        this.insuranceFee = insuranceFee;
-        this.vehicleId = vehicleId;
-        this.dateRegistered = dateRegistered;
-        this.expirationDate = expirationDate;
-    }
 }
